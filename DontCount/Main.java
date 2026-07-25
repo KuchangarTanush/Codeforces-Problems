@@ -1,40 +1,29 @@
 // package Codeforces.DontCount;
 import java.util.*;
+import java.io.*;
 
 public class Main {
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        int t = sc.nextInt();
+    public static void main(String[] args) throws IOException {
+        DataInputStream in = new DataInputStream(new BufferedInputStream(System.in, 1 << 16));
+        int t = nextInt(in);
         StringBuilder result = new StringBuilder();
 
         while (t-- > 0) {
-            int n = sc.nextInt();
-            int m = sc.nextInt();
-            String x = sc.next();
-            String s = sc.next();
+            int n = nextInt(in);
+            int m = nextInt(in);
+            String x = nextToken(in);
+            String s = nextToken(in);
 
             StringBuilder sb = new StringBuilder(x);
             int ans = 0;
-            boolean found = false;
+            boolean found = sb.indexOf(s) != -1;
 
-            // Check without any operation first
-            if (sb.toString().contains(s)) {
-                found = true;
-            } else {
-                // Try doubling up to a safe number of times.
-                // Since n*m <= 25, s can't be longer than 25 chars,
-                // so a small number of doublings is always enough to decide.
-                int maxOps = 20;
-                for (int i = 1; i <= maxOps; i++) {
-                    sb.append(sb); // x = x + x
-                    ans = i;
-                    if (sb.toString().contains(s)) {
-                        found = true;
-                        break;
-                    }
-                    // Safety: if sb is already much longer than s and still
-                    // not found, keep doubling anyway since maxOps is small
-                    // and n*m<=25 keeps this cheap.
+            int cap = 2 * m + n;
+            while (!found && sb.length() < cap) {
+                sb.append(sb);
+                ans++;
+                if (sb.indexOf(s) != -1) {
+                    found = true;
                 }
             }
 
@@ -42,5 +31,27 @@ public class Main {
         }
 
         System.out.print(result);
+    }
+
+    private static int nextInt(DataInputStream in) throws IOException {
+        int ret = 0;
+        int b = in.read();
+        while (b < '0' || b > '9') b = in.read();
+        while (b >= '0' && b <= '9') {
+            ret = ret * 10 + (b - '0');
+            b = in.read();
+        }
+        return ret;
+    }
+
+    private static String nextToken(DataInputStream in) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        int b = in.read();
+        while (b == ' ' || b == '\n' || b == '\r') b = in.read();
+        while (b != -1 && b != ' ' && b != '\n' && b != '\r') {
+            sb.append((char) b);
+            b = in.read();
+        }
+        return sb.toString();
     }
 }
